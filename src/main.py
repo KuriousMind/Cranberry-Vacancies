@@ -12,24 +12,19 @@ logging.basicConfig(
 
 async def main():
     """Main function that runs the LinkedIn Jobs Scraper."""
-    async with Actor() as actor:
-        # Get input
-        actor_input = await actor.get_input() or {}
-        
-        # Log the start of the scraping process
-        logging.info("Starting LinkedIn Jobs Scraper")
-        logging.info(f"Input parameters: {actor_input}")
-        
-        try:
-            # Initialize and run scraper
-            scraper = LinkedInJobsScraper(actor)
-            await scraper.run(actor_input)
-            
-            logging.info("Scraping completed successfully")
-            
-        except Exception as e:
-            logging.error(f"Scraping failed: {str(e)}")
-            raise
+    browser = None
+    try:
+        browser = await playwright.chromium.launch(headless=True)
+        context = await browser.new_context()
+        scraper = LinkedInJobsScraper(browser, context)
+        await scraper.run()
+    except Exception as e:
+        logging.error(f"Scraping failed: {str(e)}")
+        raise
+    finally:
+        if browser:
+            await browser.close()
+        logging.info("Browser resources cleaned up")
 
 if __name__ == "__main__":
     asyncio.run(main())

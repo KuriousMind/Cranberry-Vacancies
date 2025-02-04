@@ -3,16 +3,16 @@
     "type": "object",
     "schemaVersion": 1,
     "properties": {
-        "mandatoryKeywords": {
-            "title": "Mandatory Keywords",
+        "searchTerms": {
+            "title": "Search Terms",
             "type": "array",
-            "description": "Keywords that must appear in job title",
+            "description": "Mandatory keywords for job titles",
             "editor": "stringList"
         },
         "optionalKeywords": {
             "title": "Optional Keywords",
             "type": "array",
-            "description": "Keywords that may appear in job title",
+            "description": "Additional desirable keywords",
             "editor": "stringList"
         },
         "location": {
@@ -28,6 +28,40 @@
             "description": "Preferred work arrangement",
             "default": "ANY"
         },
+        "start_urls": {
+            "title": "Start URLs",
+            "type": "array",
+            "description": "Alternative starting URLs",
+            "editor": "urls"
+        },
+        "max_pages": {
+            "title": "Maximum Pages",
+            "type": "integer",
+            "description": "Maximum number of pages to scrape",
+            "minimum": 1,
+            "default": 10
+        },
+        "max_depth": {
+            "title": "Maximum Depth",
+            "type": "integer",
+            "description": "Maximum recursion depth for links",
+            "minimum": 1,
+            "default": 3
+        },
+        "page_timeout": {
+            "title": "Page Timeout (seconds)",
+            "type": "integer",
+            "description": "Maximum time to wait for page load",
+            "minimum": 10,
+            "default": 30
+        },
+        "proxy_config": {
+            "title": "Proxy Configuration",
+            "type": "object",
+            "description": "Proxy settings for the scraper",
+            "editor": "proxy",
+            "default": {"useApifyProxy": true}
+        },
         "maxJobs": {
             "title": "Maximum Jobs",
             "type": "integer",
@@ -37,5 +71,5 @@
             "maximum": 150
         }
     },
-    "required": ["mandatoryKeywords", "location"]
+    "required": ["searchTerms", "location", "start_urls"]
 }

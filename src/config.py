@@ -3,12 +3,15 @@
 # Apify settings
 DEFAULT_SETTINGS = {
     "max_jobs_per_run": 150,  # Safe limit for free tier
-    "max_concurrent_pages": 2,
-    "request_delay": 3,
+    "max_concurrent_pages": 1,
+    "request_delay": 5,  # Increased base delay
     "batch_size": 25,
     "max_retries": 3,
-    "memory_check_interval": 1000,
+    "memory_check_interval": 100,  # Check every 100 jobs instead of 1000
     "max_memory_usage": 900,  # MB
+    "jitter": 2,  # Add random variation
+    "network_idle_timeout": 10,  # Seconds to wait
+    "animation_frame_delay": 0.5  # Wait for animations
 }
 
 # LinkedIn URL templates
@@ -38,3 +41,24 @@ ERROR_MESSAGES = {
     "memory_limit": "Approaching memory limit. Saving current progress...",
     "compute_limit": "Approaching compute unit limit. Finalizing current batch..."
 }
+
+# Input mapping
+INPUT_MAPPING = {
+    'search_terms': 'searchTerms',
+    'location': 'location',
+    'max_results': 'maxJobs',
+    'optional_keywords': 'optionalKeywords',
+    'work_type': 'workType',
+    'start_urls': 'start_urls'
+}
+
+__version__ = "2.1.0"  # Major version bump for significant changes
+
+class Config:
+    DEFAULT_INPUT = {
+        "mandatoryKeywords": [],
+        "optionalKeywords": [],
+        "location": "",
+        "workType": "ANY",
+        "maxJobs": 100
+    }

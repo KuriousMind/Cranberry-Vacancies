@@ -65,7 +65,7 @@ def parse_date(date_str: str) -> str:
         return date_str
 
 def extract_salary(salary_text: str) -> Dict[str, Union[float, str, None]]:
-    """Extract salary information from text."""
+    """Improved salary parsing with better range handling."""
     salary_info = {
         "min": None,
         "max": None,
@@ -76,45 +76,40 @@ def extract_salary(salary_text: str) -> Dict[str, Union[float, str, None]]:
     if not salary_text:
         return salary_info
     
-    # Remove common words and normalize
-    salary_text = salary_text.lower().replace(',', '')
+    # Normalize text
+    text = salary_text.lower().replace(',', '').replace('~', '-')
     
-    # Try to find currency
-    currencies = {
-        '$': 'USD',
-        '£': 'GBP',
-        '€': 'EUR'
-    }
-    for symbol, code in currencies.items():
-        if symbol in salary_text:
-            salary_info['currency'] = code
-            break
+    # Currency detection
+    currency_map = {'$': 'USD', '£': 'GBP', '€': 'EUR', '₹': 'INR', '¥': 'JPY'}
+    salary_info['currency'] = next(
+        (v for k, v in currency_map.items() if k in text),
+        None
+    )
     
-    # Find salary range
-    numbers = re.findall(r'\d+\.?\d*[k]?\s*-?\s*\d*\.?\d*[k]?', salary_text)
+    # Extract numerical values
+    numbers = re.findall(r'\d+\.?\d*[k]?', text)
+    numbers = [float(n.replace('k', '')) * 1000 if 'k' in n else float(n) for n in numbers]
+    
     if numbers:
-        range_text = numbers[0]
-        parts = range_text.split('-')
-        
-        def parse_number(num_str: str) -> float:
-            num_str = num_str.strip()
-            multiplier = 1000 if 'k' in num_str else 1
-            return float(num_str.replace('k', '')) * multiplier
-        
-        salary_info['min'] = parse_number(parts[0])
-        salary_info['max'] = parse_number(parts[1]) if len(parts) > 1 else salary_info['min']
+        if 'up to' in text:
+            salary_info['max'] = max(numbers)
+        elif 'from' in text:
+            salary_info['min'] = min(numbers)
+        else:
+            salary_info['min'] = min(numbers)
+            salary_info['max'] = max(numbers) if len(numbers) > 1 else None
     
-    # Determine period
-    periods = {
-        'year': 'yearly',
-        'month': 'monthly',
-        'week': 'weekly',
-        'hour': 'hourly'
+    # Period detection
+    period_map = {
+        'year': 'yearly', 'yr': 'yearly', 'annual': 'yearly',
+        'month': 'monthly', 'mo': 'monthly',
+        'week': 'weekly', 'wk': 'weekly',
+        'hour': 'hourly', 'hr': 'hourly'
     }
-    for period, value in periods.items():
-        if period in salary_text:
-            salary_info['period'] = value
-            break
+    salary_info['period'] = next(
+        (v for k, v in period_map.items() if k in text),
+        None
+    )
     
     return salary_info
 
