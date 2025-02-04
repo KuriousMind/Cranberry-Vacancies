@@ -1,0 +1,41 @@
+{
+    "title": "LinkedIn Jobs Scraper",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "mandatoryKeywords": {
+            "title": "Mandatory Keywords",
+            "type": "array",
+            "description": "Keywords that must appear in job title",
+            "editor": "stringList"
+        },
+        "optionalKeywords": {
+            "title": "Optional Keywords",
+            "type": "array",
+            "description": "Keywords that may appear in job title",
+            "editor": "stringList"
+        },
+        "location": {
+            "title": "Location",
+            "type": "string",
+            "description": "Job location to search for",
+            "editor": "textfield"
+        },
+        "workType": {
+            "title": "Work Type",
+            "type": "string",
+            "enum": ["REMOTE", "HYBRID", "ON_SITE", "ANY"],
+            "description": "Preferred work arrangement",
+            "default": "ANY"
+        },
+        "maxJobs": {
+            "title": "Maximum Jobs",
+            "type": "integer",
+            "description": "Maximum number of jobs to scrape (limited by free tier)",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 150
+        }
+    },
+    "required": ["mandatoryKeywords", "location"]
+}

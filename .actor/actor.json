@@ -1,0 +1,9 @@
+{
+	"actorSpecification": 1,
+	"environmentVariables": {
+		"APIFY_LOG_LEVEL": "INFO"
+	},
+	"name": "linkedin-jobs-scraper",
+	"version": "1.0",
+	"buildTag": "latest"
+}
